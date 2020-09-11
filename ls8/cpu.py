@@ -55,7 +55,7 @@ class CPU:
         self.branchtable[CALL] = self.handle_CALL
         self.branchtable[RET] = self.handle_RET
 
-        self.branchtable[CMP] = self.handle_CMP
+        # self.branchtable[CMP] = self.handle_CMP
 
         self.branchtable[JMP] = self.handle_JMP
         self.branchtable[JEQ] = self.handle_JEQ
@@ -136,9 +136,9 @@ class CPU:
         from run() if you need help debugging.
         """
 
-        print(f"TRACE: %02X | %02X %02X %02X |" % (
+        print(f"TRACE: PC: %02X | FL: %02X %02X %02X |" % (
             self.PC,
-            #self.FL,
+            self.FL,
             #self.ie,
             self.ram_read(self.PC),
             self.ram_read(self.PC + 1),
@@ -197,13 +197,30 @@ class CPU:
     #     pass
     
     def handle_JEQ(self):
-        pass
+        equal = self.FL & 0b00000001
+
+        if equal:
+            register = self.ram_read(self.PC +1) # get register
+            address = self.reg[register] # get address
+            self.PC = address # jump to address
+        else:
+            self.PC += 2 # go to next instruction
 
     def handle_JMP(self):
-        pass
+        register = self.ram_read(self.PC + 1) # get register
+        address = self.reg[register] # get address for jump
+        self.PC = address # jump to address
 
     def handle_JNE(self):
-        pass
+        equal = self.FL & 0b00000001
+
+        if not equal:
+            register = self.ram_read(self.PC + 1) # get register
+            address = self.reg[register] # get address
+            self.PC = address # jump to address
+
+        else:
+            self.PC += 2 # go to next instruction
 
     def run(self):
         """Run the CPU."""
