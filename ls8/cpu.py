@@ -37,7 +37,7 @@ class CPU:
         self.IR = None # Instruction Register - copy of current instruction
         self.MAR = 0 # Memory Address Register - holds memory address being read/written
         self.MDR = None # Memory Data Register - holds value being read/written
-        self.FL = None # Flag Register - holds flag status
+        self.FL = 0b00000000 # Flag Register - holds flag status
 
         self.reg[7] = 0xF4 # Init stack pointer to address 0xF4
 
@@ -98,6 +98,23 @@ class CPU:
             self.reg[reg_a] *= self.reg[reg_b]
         elif op == DIV:
             self.reg[reg_a] /= self.reg[reg_b]
+        elif op == CMP:
+            # Reset
+            self.fl = 0b00000000
+            # if reg a = reg b 
+            if self.reg[reg_a] == self.reg[reg_b]:
+                # set E flag to 1 or 0
+                self.fl = self.fl | 0b00000001
+
+            # if reg a >  reg b 
+            if self.reg[reg_a] == self.reg[reg_b]:
+                # set G flag to 1 or 0
+                self.fl = self.fl | 0b00000010
+
+            # if reg a <  reg b 
+            if self.reg[reg_a] == self.reg[reg_b]:
+                # set F flag to 1 or 0
+                self.fl = self.fl | 0b00000100
         else:
             raise Exception("Unsupported ALU operation")
 
@@ -176,8 +193,8 @@ class CPU:
 
         self.PC = address
 
-    def handle_CMP(self):
-        pass
+    # def handle_CMP(self):
+    #     pass
     
     def handle_JEQ(self):
         pass
