@@ -13,6 +13,14 @@ SUB = 0b10100001
 MUL = 0b10100010
 DIV = 0b10100011
 
+OR = 0b10101010
+XOR = 0b10101011
+SHL = 0b10101100
+SHR = 0b10101101
+ADDI = 0b11001000
+NOT = 0b1101001
+MOD = 0b10100100
+
 PUSH = 0b01000101
 POP = 0b01000110
 
@@ -55,8 +63,6 @@ class CPU:
         self.branchtable[CALL] = self.handle_CALL
         self.branchtable[RET] = self.handle_RET
 
-        # self.branchtable[CMP] = self.handle_CMP
-
         self.branchtable[JMP] = self.handle_JMP
         self.branchtable[JEQ] = self.handle_JEQ
         self.branchtable[JNE] = self.handle_JNE
@@ -98,6 +104,20 @@ class CPU:
             self.reg[reg_a] *= self.reg[reg_b]
         elif op == DIV:
             self.reg[reg_a] /= self.reg[reg_b]
+        elif op == XOR:
+            a = self.reg[reg_a]
+            b = self.reg[reg_b]
+            self.reg[reg_a] = (a | b) & ~(a & b)
+        elif op == NOT:
+            self.reg[reg_a] = ~self.reg[reg_a]
+        elif op == SHL:
+            self.reg[reg_a] << self.reg[reg_b]
+        elif op == SHR:
+            self.reg[reg_a] >> self.reg[reg_b]
+        elif op == MOD:
+            self.reg[reg_a] %= self.reg[reg_b]
+        elif op == ADDI:
+            self.reg[reg_a] += reg_b
         elif op == CMP:
             # Reset
             self.FL= 0b00000000
